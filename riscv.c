@@ -216,7 +216,10 @@ void instruction_execute(int instruction)
 		{
 		case 0b010://FSW
 			*((float *)(mem + i_reg[rs1] + s_imm)) = d_reg[rs2];
-			//FSD
+			break;
+		case 0b011://FSD
+			*((double *)(mem + i_reg[rs1] + s_imm)) = d_reg[rs2];
+			break;
 		}
 		break;
 
@@ -351,7 +354,7 @@ void instruction_execute(int instruction)
 			break;
 
 		case 0b1110000:
-			if (rm == 0b000)//FMV.X.S
+			if (rm == 0b000)//FMV.X.S meichuxian
 			{
 				i_reg[rd] = *(int *)(d_reg + rs1);
 				i_reg[rd] = (i_reg[rd] >> 31) & 1 ? i_reg[rd] : i_reg[rd] | 0xFFFF0000;
@@ -396,10 +399,10 @@ void instruction_execute(int instruction)
 		case 0b1101000://FCVT.S.W&WU
 			switch (rs2) {
 			case 0b0000://FCVT.S.W
-				d_reg[rd] = (float)(i_reg[rs1]);
+				d_reg[rd] = (float)(int)(i_reg[rs1]);
 				break;
 			case 0b0001://FCVT.S.WU
-				d_reg[rd] = (float)(unsigned)(i_reg[rs1]);
+				d_reg[rd] = (float)(unsigned int)(i_reg[rs1]);
 				break;
 			case 0b00010://FCVT.S.L
 				d_reg[rd] = (float)(i_reg[rs1]);
@@ -413,10 +416,10 @@ void instruction_execute(int instruction)
 		case 0b1101001://FCVT.D
 			switch (rs2) {
 			case 0b00000://FCVT.D.W
-				d_reg[rd] = i_reg[rs1];
+				d_reg[rd] = (int)i_reg[rs1];
 				break;
 			case 0b0001://FCVT.D.WU
-				d_reg[rd] = (unsigned)(i_reg[rs1]);
+				d_reg[rd] = (unsigned int)(i_reg[rs1]);
 				break;
 			case 0b00010://FCVT.D.L
 				d_reg[rd] = i_reg[rs1];
@@ -428,7 +431,6 @@ void instruction_execute(int instruction)
 			break;
 
 		case 0b1111000://FMV.S.X
-			tempf;
 			*(int *)(&tempf) = LOW_32(i_reg[rs1]);
 			d_reg[rd] = tempf;
 			break;
@@ -615,6 +617,7 @@ void instruction_execute(int instruction)
 				//AND
 			case 7:
 				i_reg[rd] = i_reg[rs1] & i_reg[rs2];
+				break;
 			}
 		}
 		break;
@@ -705,4 +708,9 @@ void instruction_execute(int instruction)
 		printf("Undefined opcode %lld\r\n", opcode);
 		exit(0);
 	}
+}
+int main(int argc, char const *argv[])
+{
+	
+	return 0;
 }
